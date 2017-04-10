@@ -19,18 +19,18 @@ s3name=$name.aes
 #echo "Starting backup from:$DATA_PATH to $S3_PATH/$s3name" 
 
 tar czf /tmp/$name  -C $DATA_PATH .
-openssl enc -aes-256-cbc -salt -k $AES_PASSPHRASE -in /tmp/$name -out /tmp/$s3name
+openssl enc -aes-256-cbc -salt -k "${AES_PASSPHRASE}" -in /tmp/$name -out /tmp/$s3name
 
 output=$(/usr/local/bin/s3cmd put -m application/octet-stream $PARAMS /tmp/$s3name "$S3_PATH" 2>&1 | tr '\n' ';' )
-code=$? 
+code=$?
 if [ $code ]; then
     result=ok
 else
     result="error:$code"
-fi  
+fi
 
 rm -f /tmp/$name
-rm -f /tmp/$s3name.aes
+rm -f /tmp/$s3name
 
 finished=$(date +%s)
 duration=$(( finished - started ))

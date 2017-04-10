@@ -15,28 +15,28 @@ echo "secret_key=$SECRET_KEY" >> /root/.s3cfg
 
 case $1 in 
 
-    backup-once)
-	exec /backup.sh
-	;;
+  backup-once)
+    exec /backup.sh
+    ;;
 
-    schedule)
-	echo "Scheduling backup cron:$CRON_SCHEDULE" 
-	LOGFIFO='/var/log/cron.fifo'
-	if [[ ! -e "$LOGFIFO" ]]; then
-	    mkfifo "$LOGFIFO"
-	fi
-	CRON_ENV="PARAMS='$PARAMS'\nDATA_PATH='$DATA_PATH'\nS3_PATH='$S3_PATH'\nPREFIX='$PREFIX'\nAES_PASSPHRASE='$AES_PASSPHRASE'"
-	echo -e "$CRON_ENV\n$CRON_SCHEDULE /backup.sh > $LOGFIFO 2>&1" | crontab -
-	cron
-	tail -f "$LOGFIFO"
-	;;
-    
-    restore)
-	exec /restore.sh
-	: ${VERSION:?:"VERSION env varible is required"}
-	;;
+  schedule)
+    echo "Scheduling backup cron:$CRON_SCHEDULE"
+    LOGFIFO='/var/log/cron.fifo'
+    if [[ ! -e "$LOGFIFO" ]]; then
+      mkfifo "$LOGFIFO"
+    fi
+    CRON_ENV="PARAMS='$PARAMS'\nDATA_PATH='$DATA_PATH'\nS3_PATH='$S3_PATH'\nPREFIX='$PREFIX'\nAES_PASSPHRASE='$AES_PASSPHRASE'"
+    echo -e "$CRON_ENV\n$CRON_SCHEDULE /backup.sh > $LOGFIFO 2>&1" | crontab -
+    cron
+    tail -f "$LOGFIFO"
+    ;;
 
-    *)
-	echo "Error: must specify operation, one of backup, schedule or restore"
-	exit 1
+  restore)
+    : ${VERSION:?"VERSION env variable is required"}
+    exec /restore.sh
+    ;;
+
+  *)
+    echo "Error: must specify operation, one of backup-once, schedule or restore"
+    exit 1
 esac

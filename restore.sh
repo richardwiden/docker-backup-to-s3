@@ -14,16 +14,16 @@ tarfile=restore.tgz
 
 #echo "Starting restore $S3_PATH/$s3obj to:$DATA_PATH" 
 
-output=$(/usr/local/bin/s3cmd sync $PARAMS "$S3_PATH/$s3obj" $DATA_PATH 2>&1 | tr '\n' ';' )
-code=$? 
+output=$(/usr/local/bin/s3cmd sync $PARAMS "${S3_PATH}${s3obj}" $DATA_PATH 2>&1 | tr '\n' ';' )
+code=$?
 if [ $code ]; then
     result=ok
     cd $DATA_PATH
-    openssl aes-256-cbc -k $AES_PASSPHRASE -in $s3obj -out $tarfile -d
+    openssl aes-256-cbc -k "${AES_PASSPHRASE}" -in $s3obj -out $tarfile -d
     tar xzf $tarfile
 else
     result="error:$code"
-fi  
+fi
 
 rm -f $s3obj
 rm -f $tarfile

@@ -3,7 +3,7 @@ MAINTAINER Strawpay <info@strawpay.com>
 
 RUN apt-get update && \
     apt-get install -y python python-pip cron && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install s3cmd
 
