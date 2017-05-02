@@ -1,19 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 test -z $DEBUG || set -x
 
 
-: ${ACCESS_KEY:?"ACCESS_KEY env variable is required"}
-: ${SECRET_KEY:?"SECRET_KEY env variable is required"}
+: ${AWS_DEFAULT_REGION:?"AWS_DEFAULT_REGION env variable is required"}
+: ${AWS_ACCESS_KEY_ID:?"AWS_ACCESS_KEY_ID env variable is required"}
+: ${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY env variable is required"}
 : ${S3_PATH:?"S3_PATH env variable is required"}
 : ${AES_PASSPHRASE:?"AES_PASSPHRASE env variable is required"}
 export DATA_PATH=${DATA_PATH:-/data/}
 export PARAMS="${PARAMS} --no-progress"
 CRON_SCHEDULE=${CRON_SCHEDULE:-3 5 * * *}
-
-echo "access_key=$ACCESS_KEY" >> /root/.s3cfg
-echo "secret_key=$SECRET_KEY" >> /root/.s3cfg
 
 case $1 in 
 
@@ -23,7 +21,7 @@ case $1 in
 
   schedule)
     echo "Scheduling backup cron: $CRON_SCHEDULE"
-    CRONFILE='/etc/cron.d/backup'
+    CRONFILE='/etc/crontabs/backup'
     export LOGFILE='/var/log/backup.log'
 
     touch $LOGFILE
@@ -33,8 +31,8 @@ case $1 in
     echo -e "$CRON_ENV\n\n$CRON_SCHEDULE /backup.sh"  > $CRONFILE
     crontab $CRONFILE
 
-    cron
-    exec tail -f $LOGFILE
+    exec crond -f
+    # exec tail -f $LOGFILE
     ;;
 
   restore)

@@ -1,6 +1,6 @@
 # gaieges/backup-to-s3
 
-Docker container that periodically backups files to Amazon S3 using [s3cmd](http://s3tools.org/s3cmd) and cron.
+Docker container that periodically backups files to Amazon S3 using awscli and cron.
 All files will be tar:ed and encrypted with AES 256 CBC.
 
 **Always test to restore the files from the backup, before relying on it.**
@@ -27,8 +27,9 @@ docker run -d [options] gaieges/backup-to-s3 backup-once|schedule|restore
 
 | Name                                                | Operation        | Required | Description |
 | -------------------------------------------------  | ----------------- | --------- | --------------------------- |
-| -e ACCESS_KEY=&lt;AWS_KEY&gt;                      | all                   | yes |  Your AWS key  |
-| -e SECRET_KEY=&lt;AWS_SECRET&gt;                   | all                   | yes | Your AWS secret |
+| -e AWS_ACCESS_KEY_ID=eu-central-1                  | all                   | yes |  Endpoint region (ideally where bucket is located)  |
+| -e AWS_ACCESS_KEY_ID=&lt;AWS_KEY&gt;               | all                   | yes |  Your AWS key  |
+| -e AWS_SECRET_ACCESS_KEY=&lt;AWS_SECRET&gt;        | all                   | yes | Your AWS secret |
 | -e S3_PATH=s3://&lt;BUCKET_NAME&gt;/&lt;PATH&gt;/  | all                   | yes | S3 Bucket name and path. Should end with trailing slash. | 
 | -e AES_PASSPHRASE=&lt;PASSPHRASE&gt;               | all                   | yes | Passphrase to generate AES-256-CBC encryption keys with. 
 | -e WIPE_TARGET=false                               | restore               | no | Delete contents of target directory before restoring.
@@ -48,8 +49,9 @@ Backup to S3 everyday at 12:00:
 
 ```bash
 docker run -d \
-	-e ACCESS_KEY=myawskey \
-	-e SECRET_KEY=myawssecret \
+	-e AWS_DEFAULT_REGION=eu-central-1 \
+	-e AWS_ACCESS_KEY_ID=myawskey \
+	-e AWS_SECRET_ACCESS_KEY=myawssecret \
 	-e S3_PATH=s3://my-bucket/backup/ \
 	-e AES_PASSPHRASE=secret \
 	-e CRON_SCHEDULE='0 12 * * *' \
@@ -62,8 +64,9 @@ Backup once and then delete the container:
 
 ```bash
 docker run --rm \
-	-e ACCESS_KEY=myawskey \
-	-e SECRET_KEY=myawssecret \
+	-e AWS_DEFAULT_REGION=eu-central-1 \
+	-e AWS_ACCESS_KEY_ID=myawskey \
+	-e AWS_SECRET_ACCESS_KEY=myawssecret \
 	-e S3_PATH=s3://my-bucket/backup/ \
 	-e AES_PASSPHRASE=secret \
 	-v /home/user/data:/data:ro \
@@ -74,8 +77,9 @@ Restore the backup from `2016-04-11T07:25:30Z` and then delete the container:
 
 ```bash
 docker run --rm \
-	-e ACCESS_KEY=myawskey \
-	-e SECRET_KEY=myawssecret \
+	-e AWS_DEFAULT_REGION=eu-central-1 \
+	-e AWS_ACCESS_KEY_ID=myawskey \
+	-e AWS_SECRET_ACCESS_KEY=myawssecret \
 	-e S3_PATH=s3://my-bucket/backup/ \
 		-e AES_PASSPHRASE=secret \
 	-e VERSION=2016-04-11T07:25:30Z

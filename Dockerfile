@@ -2,9 +2,9 @@ FROM alpine
 MAINTAINER <gaieges@gmail.com>
 
 RUN apk update && \
-    apk add -y py-pip apk-cron curl openssl && \
+    apk add -y py-pip apk-cron curl openssl bash && \
     pip install -U pip && \
-    pip install s3cmd && \
+    pip install awscli && \
     rm -rf /var/cache/apk/*
 
 ADD s3cfg /root/.s3cfg

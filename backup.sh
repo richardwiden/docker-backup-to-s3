@@ -1,6 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-set -e
 test -z $DEBUG || set -x
 
 
@@ -26,10 +25,10 @@ runbackup() {
   tar czf /tmp/$name  -C $DATA_PATH .
   openssl enc -aes-256-cbc -salt -k "${AES_PASSPHRASE}" -in /tmp/$name -out /tmp/$s3name
 
-  output=$(s3cmd $PARAMS put -m application/octet-stream /tmp/$s3name "$S3_PATH/$s3name" | tr '\n' ';' )
+  output=$( aws s3 cp "/tmp/$s3name" "$S3_PATH/$s3name" 2>&1 )
   code=$?
   if [ $code ]; then
-      result=ok
+      result="success"
   else
       result="error:$code"
   fi
@@ -40,7 +39,7 @@ runbackup() {
   finished=$(date +%s)
   duration=$(( finished - started ))
 
-  printf "{\"backup\": { \"state\":\"success\" \"startedAt\":\"%s\", \"duration\":\"PT%is\", \"name\":\"%s/%s\", \"result\":\"%s\", \"output\":\"%s\"}}\n" "$startedAt" "$duration" "$S3_PATH" "$s3name" "$result" "$output"
+  printf "{\"backup\": { \"state\":\"%s\" \"startedAt\":\"%s\", \"duration\":\"%i seconds\", \"name\":\"%s/%s\", \"output\":\"%s\"}}\n"  "$result" "$startedAt" "$duration" "$S3_PATH" "$s3name" "$output"
 }
 
 
