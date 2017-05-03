@@ -42,5 +42,5 @@ case $1 in
 
   *)
     echo "Error: must specify operation, one of backup-once, schedule or restore"
-    exit 1
+    exec "$@"
 esac
