@@ -10,7 +10,6 @@ test -z $DEBUG || set -x
 : ${S3_PATH:?"S3_PATH env variable is required"}
 : ${AES_PASSPHRASE:?"AES_PASSPHRASE env variable is required"}
 export DATA_PATH=${DATA_PATH:-/data/}
-export PARAMS="${PARAMS}"
 CRON_SCHEDULE=${CRON_SCHEDULE:-3 5 * * *}
 
 case $1 in 
