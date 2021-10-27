@@ -9,6 +9,11 @@ test -z $DEBUG || set -x
 : ${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY env variable is required"}
 : ${S3_PATH:?"S3_PATH env variable is required"}
 : ${AES_PASSPHRASE:?"AES_PASSPHRASE env variable is required"}
+if [ -n "${S3_ENDPOINT}"]; then
+  AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
+else
+  AWS_ARGS=""
+fi
 export DATA_PATH=${DATA_PATH:-/data/}
 CRON_SCHEDULE=${CRON_SCHEDULE:-3 5 * * *}
 
