@@ -1,0 +1,27 @@
+name: CI-dev-pipeline
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ] # to change to develop
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container:
+      image: lucasalt/act_base:latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          path: "docker-backup-to-s3"
+      - name: RunOne
+        run: |
+          echo Hello, world!
+      - name: Build docker
+        run: |
+          ls -la docker-backup-to-s3
+          echo ---Building and starting up docker---
+          docker-compose -f docker-backup-to-s3/test/docker-compose.yml -p test up -d
+          echo ---Containers up---
