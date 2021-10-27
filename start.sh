@@ -9,16 +9,11 @@ test -z $DEBUG || set -x
 : ${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY env variable is required"}
 : ${S3_PATH:?"S3_PATH env variable is required"}
 : ${AES_PASSPHRASE:?"AES_PASSPHRASE env variable is required"}
-if [ -n "${S3_ENDPOINT}"]; then
-  AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
-else
-  AWS_ARGS=""
-fi
+
 export DATA_PATH=${DATA_PATH:-/data/}
 CRON_SCHEDULE=${CRON_SCHEDULE:-3 5 * * *}
 
-case $1 in 
-
+case $1 in
   backup-once)
     exec /backup.sh
     ;;
@@ -27,7 +22,6 @@ case $1 in
     echo "Scheduling backup cron: $CRON_SCHEDULE"
     CRONFILE='/etc/crontabs/backup'
     export LOGFILE='/var/log/backup.log'
-
     touch $LOGFILE
 
     # CRON_ENV="PARAMS='$PARAMS'\nDATA_PATH='$DATA_PATH'\nS3_PATH='$S3_PATH'\nPREFIX='$PREFIX'\nAES_PASSPHRASE='$AES_PASSPHRASE'"

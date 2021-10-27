@@ -18,27 +18,44 @@ jobs:
         run: |
           echo Hello, world!
       - name: Build docker
+        env:
+          AWS_DEFAULT_REGION: eu-central-1
+          AWS_ACCESS_KEY_ID: myawskey
+          AWS_SECRET_ACCESS_KEY: myawssecret
+          S3_PATH: s3://my-bucket/backup
+          S3_ENDPOINT: http://s3:9000
+          AES_PASSPHRASE: secret
         run: |
-          echo ---Building and starting up docker---
+          echo ---Destroying crap---
           docker kill s3 || true
           docker network rm local|| true
+          docker volume rm data || true
+          echo ---Building and starting up docker---
           docker network create local
 
-          docker build --tag docker-backup-to-s3:latest  docker-backup-to-s3
-          docker run -d  --rm --name s3     --network local -p 9000:9000  altmannmarcelo/minio:latest
-          docker run  --rm  --name backup --network local  docker-backup-to-s3:latest  \
-            -e AWS_DEFAULT_REGION=eu-central-1 \
-          	-e AWS_ACCESS_KEY_ID=myawskey \
-          	-e AWS_SECRET_ACCESS_KEY=myawssecret \
-          	-e S3_PATH=s3://my-bucket/backup/ \
-            -e S3_ENDPOINT=http://s3 \
-          	-e AES_PASSPHRASE=secret \
-          	-e CRON_SCHEDULE='0 12 * * *' \
-          	-v /home/user/data:/data:ro \
-             richardwiden/docker-backup-to-s3:latest backup-once
+          docker volume create data;
+          docker run   --name helper -v data:/data busybox
+          echo "my test data" > test_input
+          docker cp test_input helper:/data
+          docker rm helper
 
-          docker ps
+          docker build --tag docker-backup-to-s3:latest  docker-backup-to-s3
+          docker run -d  --rm --name s3 --network local -p 9000:9000 -e USER=myawskey -e PASSWORD=myawssecret altmannmarcelo/minio:latest
+          docker run --rm -it --network local -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY amazon/aws-cli --endpoint-url http://s3:9000 s3 mb s3://my-bucket
+          docker run  --rm  --name backup --network local  -v data:/data    \
+            -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
+          	-e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE \
+             docker-backup-to-s3:latest backup-once
+          docker volume rm data
+          docker volume create data
+          docker run  --rm  --name backup --network local  -v data:/data    \
+          -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
+          -e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE \
+          docker-backup-to-s3:latest restore
+
+          docker run -d --rm --name output -v data:/data busybox true
+          docker cp output:/data test_output
+
           echo ---Containers up---
           docker kill s3 || true
-          docker kill pg ||true
           docker network rm local || true
