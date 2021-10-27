@@ -17,8 +17,13 @@ if [[ ! -z "${WIPE_TARGET}" && "${DATA_PATH}" != "/" ]]; then
   find $DATA_PATH/ -mindepth 1 -delete
 fi
 
+if [ -n "${S3_ENDPOINT}"]; then
+  AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
+else
+  AWS_ARGS=""
+fi
 
-output=$( aws s3 cp $PARAMS "${S3_PATH}/${s3obj}" "$DATA_PATH" 2>&1 )
+output=$( aws $AWS_ARGS s3 cp $PARAMS "${S3_PATH}/${s3obj}" "$DATA_PATH" 2>&1 )
 code=$?
 if [ $code ]; then
   cd $DATA_PATH
