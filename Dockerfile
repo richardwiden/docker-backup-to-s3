@@ -11,5 +11,5 @@ ADD s3cfg /root/.s3cfg
 ADD start.sh /start.sh
 ADD backup.sh /backup.sh
 ADD restore.sh /restore.sh
-RUN chmod -x restore.sh backup.sh start.s
+RUN chmod -x restore.sh backup.sh start.sh
 ENTRYPOINT ["/start.sh"]
