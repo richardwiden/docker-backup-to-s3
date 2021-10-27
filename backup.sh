@@ -2,17 +2,14 @@
 
 test -z $DEBUG || set -x
 
-
-
 dateISO() {
   date -j -f "%s" $started -u  +"%Y-%m-%dT%H:%M:%SZ"
 }
 
-
 runbackup() {
   started=$(date +%s)
   startedAt=$(date -u -d @$started  +"%Y-%m-%dT%H:%M:%SZ")
-  if [ -n "${S3_ENDPOINT}"]; then
+  if [ -n "${S3_ENDPOINT}" ]; then
     AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
   else
     AWS_ARGS=""
