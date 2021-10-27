@@ -12,7 +12,11 @@ dateISO() {
 runbackup() {
   started=$(date +%s)
   startedAt=$(date -u -d @$started  +"%Y-%m-%dT%H:%M:%SZ")
-
+  if [ -n "${S3_ENDPOINT}"]; then
+    AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
+  else
+    AWS_ARGS=""
+  fi
   printf "{\"backup\":{\"state\":\"start\", \"startedAt\":\"%s\", \"message\":\"%s\"}}\n" "$startedAt" "Starting backup from: $DATA_PATH to $S3_PATH/$s3name"
 
   if [ "$PREFIX" ]; then
