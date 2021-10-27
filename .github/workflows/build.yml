@@ -21,7 +21,7 @@ jobs:
           echo Hello, world!
       - name: Build docker
         run: |
-          ls -la docker-backup-to-s3
+          ls -la docker-backup-to-s3/test
           echo ---Building and starting up docker---
-          docker-compose -f docker-backup-to-s3/test/docker-compose.yml -p test up -d
+          docker-compose -f docker-backup-to-s3/test/docker-compose.yml -p docker-backup-to-s3 up -d
           echo ---Containers up---

@@ -4,11 +4,10 @@ services:
     container_name: api-test
     build:
       dockerfile: Dockerfile
-      context: ./test
+      context: ../
     command:
       bash -c "npm run test; npm run test-failure"
-    networks:
-      - <YOUR_USER_DEFINED_NETWORK>
+
     environment:
       - API_URL=http://proxy:80
       - MONGO_URL=mongodb://mongo:27017/<DB_NAME>
