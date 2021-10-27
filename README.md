@@ -31,6 +31,7 @@ docker run -d [options] gaieges/backup-to-s3 backup-once|schedule|restore
 | -e AWS_ACCESS_KEY_ID=&lt;AWS_KEY&gt;               | all                   | yes |  Your AWS key  |
 | -e AWS_SECRET_ACCESS_KEY=&lt;AWS_SECRET&gt;        | all                   | yes | Your AWS secret |
 | -e S3_PATH=s3://&lt;BUCKET_NAME&gt;/&lt;PATH&gt;/  | all                   | yes | S3 Bucket name and path. Should end with trailing slash. | 
+| -e S3_ENDPOINT=https://&lt;CUSTOM_ENDPOINT&gt;     | all                   | no  | Custom endpoint for example minio or other provider than amazon
 | -e AES_PASSPHRASE=&lt;PASSPHRASE&gt;               | all                   | yes | Passphrase to generate AES-256-CBC encryption keys with. 
 | -e WIPE_TARGET=false                               | restore               | no | Delete contents of target directory before restoring.
 | -e POST_RESTORE_COMMAND=cmd                        | restore               | no | Command to run (in the container) after successfully restoring.
