@@ -1,12 +1,11 @@
 name: CI-dev-pipeline
 on:
-  # Triggers the workflow on push or pull request events but only for the develop branch
   push:
     branches: [ master ]
     tags:
       - 'v*'
   pull_request:
-    branches: [ master ] # to change to develop
+    branches: [ master ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,8 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      #- uses: satackey/action-docker-layer-caching@v0.0.11
-       # continue-on-error: true
       - name: Run backup
         run: ./test/test_backup.sh
 
