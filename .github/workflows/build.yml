@@ -18,8 +18,6 @@ jobs:
       S3_PATH: s3://my-bucket/backup
       S3_ENDPOINT: http://s3:9000
       AES_PASSPHRASE: secret
-      AWS_EC2_METADATA_DISABLED: true #https://github.com/aws/aws-cli/issues/5262#issuecomment-705832151
-      AWS_DEFAULT_REGION: us-east-1
       AWS_DEFAULT_OUTPUT: json
     steps:
       - uses: actions/checkout@v2

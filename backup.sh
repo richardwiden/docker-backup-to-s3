@@ -1,5 +1,6 @@
 #!/bin/bash
-
+AWS_EC2_METADATA_DISABLED=true #https://github.com/aws/aws-cli/issues/5262#issuecomment-705832151
+export AWS_EC2_METADATA_DISABLED
 test -z $DEBUG || set -x
 
 dateISO() {
@@ -22,6 +23,7 @@ runbackup() {
       version="$startedAt"
   fi
   export version
+
   name=$version.tgz
   s3name=$name.aes
 
