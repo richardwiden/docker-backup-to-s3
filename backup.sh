@@ -21,6 +21,7 @@ runbackup() {
   else
       version="$startedAt"
   fi
+  export version
   name=$version.tgz
   s3name=$name.aes
 
