@@ -44,6 +44,7 @@ runbackup() {
   finished=$(date +%s)
   duration=$(( finished - started ))
 
+  version=$(echo $version | sed -e 's/\r//g'| sed -e 's/\n//g')
   #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
   printf "\"%s\"" "$version"
 }
