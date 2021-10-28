@@ -14,19 +14,22 @@ runbackup() {
   else
     AWS_ARGS=""
   fi
-  printf "{\"backup\":{\"state\":\"start\", \"startedAt\":\"%s\", \"message\":\"%s\"}}" "$startedAt" "Starting backup from: $DATA_PATH to $S3_PATH/$s3name"
+  #printf "{\"backup\":{\"state\":\"start\", \"startedAt\":\"%s\", \"message\":\"%s\"}}" "$startedAt" "Starting backup from: $DATA_PATH to $S3_PATH/$s3name" | jq
 
   if [ "$PREFIX" ]; then
-      name="$PREFIX-$startedAt.tgz"
+      version="$PREFIX-$startedAt"
   else
-      name="$startedAt.tgz"
+      version="$startedAt"
   fi
+  name=$version.tgz
   s3name=$name.aes
 
   tar czf /tmp/$name  -C $DATA_PATH .
-  openssl enc -aes-256-cbc -pbkdf2 -iter 1000 -salt -k "${AES_PASSPHRASE}" -in /tmp/$name -out /tmp/$s3name
+  openssl enc -aes-256-cbc -iter 1000 -k "${AES_PASSPHRASE}" -in /tmp/$name -out /tmp/$s3name
 
-  output=$( aws $AWS_ARGS s3 cp $PARAMS "/tmp/$s3name" "$S3_PATH/$s3name" 2>&1 )
+  output="$( aws $AWS_ARGS s3 cp $PARAMS "/tmp/$s3name" "$S3_PATH/$s3name" 2>&1 )"
+  output=$(echo $output | sed -e 's/\r//g'| sed -e 's/\n//g')
+
   code=$?
   if [ $code ]; then
       result="success"
@@ -40,7 +43,7 @@ runbackup() {
   finished=$(date +%s)
   duration=$(( finished - started ))
 
-  printf "{\"backup\": { \"state\":\"%s\" \"startedAt\":\"%s\", \"duration\":\"%i seconds\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$S3_PATH" "$s3name" "$output"
+  printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
 }
 
 

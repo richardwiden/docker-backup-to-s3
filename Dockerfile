@@ -2,7 +2,7 @@ FROM alpine
 MAINTAINER <richardwiden@gmail.com>
 
 RUN apk update && \
-    apk add -f py-pip apk-cron curl openssl bash && \
+    apk add -f py-pip apk-cron curl openssl bash jq && \
     pip install -U pip && \
     pip install awscli && \
     rm -rf /var/cache/apk/*
