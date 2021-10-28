@@ -10,18 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: lucasalt/act_base:latest
+    env:
+      AWS_DEFAULT_REGION: eu-central-1
+      AWS_ACCESS_KEY_ID: myawskey
+      AWS_SECRET_ACCESS_KEY: myawssecret
+      S3_PATH: s3://my-bucket/backup
+      S3_ENDPOINT: http://s3:9000
+      AES_PASSPHRASE: secret
     steps:
       - uses: actions/checkout@v2
         with:
           path: "docker-backup-to-s3"
-      - name: Build docker
-        env:
-          AWS_DEFAULT_REGION: eu-central-1
-          AWS_ACCESS_KEY_ID: myawskey
-          AWS_SECRET_ACCESS_KEY: myawssecret
-          S3_PATH: s3://my-bucket/backup
-          S3_ENDPOINT: http://s3:9000
-          AES_PASSPHRASE: secret
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: Run backup
         run: |
           echo ---Destroying crap---
           docker kill s3 || true
@@ -39,12 +41,14 @@ jobs:
           docker build --tag docker-backup-to-s3:latest  docker-backup-to-s3
           docker run -dt  --rm --name s3 --network local -p 9000:9000 -e USER=myawskey -e PASSWORD=myawssecret altmannmarcelo/minio:latest
           docker run --rm -it --network local -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY amazon/aws-cli --endpoint-url http://s3:9000 s3 mb s3://my-bucket
-          VERSION=$(docker run  --rm  --name backup --network local  -v data:/data    \
+          docker run  --rm  --name backup --network local  -v data:/data    \
             -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
           	-e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE \
-             docker-backup-to-s3:latest backup-once |  docker run --rm -i imega/jq -r '.backup | .version')
-          export VERSION
+             docker-backup-to-s3:latest backup-once |  docker run --rm -i imega/jq -r '.backup | .version' > VERSION
+          echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
           docker volume rm data
+      - name: Run Restore
+        run: |
           docker volume create data
           docker run  --rm  --name backup --network local  -v data:/data    \
           -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
@@ -58,7 +62,8 @@ jobs:
           diff test_input test_output/test_input
           echo ---Killing and removing---
           docker network rm local || true
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
