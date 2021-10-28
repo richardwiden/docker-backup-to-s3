@@ -8,7 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    container:
+      image: lucasalt/act_base:latest
     env:
       AWS_ACCESS_KEY_ID: myawskey
       AWS_SECRET_ACCESS_KEY: myawssecret

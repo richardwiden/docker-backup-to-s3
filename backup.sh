@@ -44,8 +44,8 @@ runbackup() {
   finished=$(date +%s)
   duration=$(( finished - started ))
 
-  printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
-  #printf "%s" "$version"
+  #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
+  printf "\"%s\"" "$version"
 }
 
 
@@ -54,8 +54,7 @@ runbackup() {
   flock -n 200 || exit 1
 
   exec &> >( tee -a ${LOGFILE:-/var/log/backup.log} )
-  # exec 2>&1 
-  echo "Running backup"
+  # exec 2>&1
   runbackup
 ) 200> /var/lock/backup
 
