@@ -14,7 +14,7 @@ runbackup() {
   else
     AWS_ARGS=""
   fi
-  printf "{\"backup\":{\"state\":\"start\", \"startedAt\":\"%s\", \"message\":\"%s\"}}" "$startedAt" "Starting backup from: $DATA_PATH to $S3_PATH/$s3name" | jq
+  #printf "{\"backup\":{\"state\":\"start\", \"startedAt\":\"%s\", \"message\":\"%s\"}}" "$startedAt" "Starting backup from: $DATA_PATH to $S3_PATH/$s3name" | jq
 
   if [ "$PREFIX" ]; then
       version="$PREFIX-$startedAt"
@@ -46,7 +46,7 @@ runbackup() {
 
   version=$(echo $version | sed -e 's/\r//g'| sed -e 's/\n//g')
   #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
-  printf "\"%s\"" "$version"
+  printf "%s" "$version"
 }
 
 
