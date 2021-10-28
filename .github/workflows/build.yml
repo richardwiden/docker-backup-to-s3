@@ -18,6 +18,7 @@ jobs:
       S3_ENDPOINT: http://s3:9000
       AES_PASSPHRASE: secret
       AWS_DEFAULT_OUTPUT: json
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - uses: actions/checkout@v2
 
