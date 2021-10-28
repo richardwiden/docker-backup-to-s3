@@ -37,3 +37,11 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: false
           title: "Development Build"
+          files: |
+            start.sh
+            backup.sh
+            restore.sh
+            s3cfg
+            Dockerfile
+            LICENSE
+            README.md
