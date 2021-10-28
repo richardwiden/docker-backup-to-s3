@@ -1,5 +1,6 @@
 FROM alpine
 LABEL org.opencontainers.image.authors="richardwiden@gmail.com"
+LABEL org.opencontainers.image.source=https://github.com/richardwiden/docker-backup-to-s3
 MAINTAINER "richardwiden@gmail.com"
 LABEL version="1.0"
 
