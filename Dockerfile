@@ -1,5 +1,7 @@
 FROM alpine
-MAINTAINER <richardwiden@gmail.com>
+LABEL org.opencontainers.image.authors="richardwiden@gmail.com"
+MAINTAINER "richardwiden@gmail.com"
+LABEL version="1.0"
 
 RUN apk update && \
     apk add -f py-pip apk-cron curl openssl bash jq && \
