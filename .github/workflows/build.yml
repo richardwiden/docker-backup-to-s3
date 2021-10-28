@@ -21,47 +21,15 @@ jobs:
       AWS_DEFAULT_OUTPUT: json
     steps:
       - uses: actions/checkout@v2
-        with:
-          path: "docker-backup-to-s3"
+
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: Run backup
-        run: |
-          echo ---Destroying crap---
-          docker kill s3 || true
-          docker network rm local|| true
-          docker volume rm data || true
-          echo ---Building and starting up docker---
-          docker network create local
+        run: ./test/test_backup.sh
 
-          docker volume create data;
-          docker run  --name helper -v data:/data busybox
-          echo "my test data" > test_input
-          docker cp test_input helper:/data
-          docker rm helper
+      - name: Run restore
+        run: ./test/test_restore.sh
 
-          docker build --tag docker-backup-to-s3:latest  docker-backup-to-s3
-          docker run --rm --network local --name s3 -d -p 9000:9000 -e USER=myawskey -e PASSWORD=myawssecret altmannmarcelo/minio:latest
-          docker run --rm --network local --name aws -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_EC2_METADATA_DISABLED amazon/aws-cli --endpoint-url http://s3:9000 s3 mb s3://my-bucket
-          echo "VERSION=$(docker run --rm --network local --name backup -v data:/data -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE docker-backup-to-s3:latest backup-once)" >> $GITHUB_ENV
-          docker volume rm data
-      - name: Run backup
-        run: |
-          echo "$VERSION"
-          echo ${{ env.VERSION }}
-          docker volume create data
-          docker run  --rm  --name backup --network local  -v data:/data    \
-          -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
-          -e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE -e VERSION \
-          docker-backup-to-s3:latest restore
-          docker kill s3
-          docker run -d  --name helper -v data:/data busybox true
-          docker cp helper:/data test_output
-          docker rm helper
-          docker volume rm data
-          diff test_input test_output/test_input
-          echo ---Killing and removing---
-          docker network rm local || true
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
