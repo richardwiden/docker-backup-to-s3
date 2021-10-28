@@ -44,7 +44,7 @@ runbackup() {
   duration=$(( finished - started ))
 
   #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
-  echo $version
+  echo "$version"
 }
 
 
