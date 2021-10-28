@@ -45,7 +45,7 @@ runbackup() {
   duration=$(( finished - started ))
 
   #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
-  echo "aa$version"
+  printf $version
 }
 
 
@@ -55,7 +55,7 @@ runbackup() {
 
   exec &> >( tee -a ${LOGFILE:-/var/log/backup.log} )
   # exec 2>&1 
-
+  echo "Running backup"
   runbackup
 ) 200> /var/lock/backup
 
