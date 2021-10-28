@@ -37,7 +37,7 @@ jobs:
           docker rm helper
 
           docker build --tag docker-backup-to-s3:latest  docker-backup-to-s3
-          docker run -d  --rm --name s3 --network local -p 9000:9000 -e USER=myawskey -e PASSWORD=myawssecret altmannmarcelo/minio:latest
+          docker run -dt  --rm --name s3 --network local -p 9000:9000 -e USER=myawskey -e PASSWORD=myawssecret altmannmarcelo/minio:latest
           docker run --rm -it --network local -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY amazon/aws-cli --endpoint-url http://s3:9000 s3 mb s3://my-bucket
           VERSION=$(docker run  --rm  --name backup --network local  -v data:/data    \
             -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
