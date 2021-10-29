@@ -10,3 +10,7 @@ docker cp helper:/data test_output
 docker rm helper
 docker volume rm data
 diff test_input test_output/test_input
+if [ -f "test_output/file_that_should_be_excluded" ]; then
+  echo "Excluded file was restored"
+  exit 1
+fi
