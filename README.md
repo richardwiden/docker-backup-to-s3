@@ -38,7 +38,7 @@ docker run -d [options] richardwiden/backup-to-s3 backup-once|schedule|restore
 | -e VERSION=&lt;VERSION_TO_RESTORE&gt;              | restore               | yes | The version to restore, must be the full s3 object name without the `tgz.aes` suffix. | 
 | -e PARAMS="--dry-run"                              | all                   | no  | Parameters to pass to the s3 command. [(full list here)](http://docs.aws.amazon.com/cli/latest/reference/s3/cp.html) | 
 | -e DATA_PATH=/data/                                | all                   | no  | Container's data folder. Default is `/data/`. Should end with trailing slash. |
-| -e EXCLUDE_FILES=/data/sub_dir_without_trailing_s  | backup                | no  | Passed to tar as --exclude="$EXCLUDE_FILES"
+| -e EXCLUDE_FILES=/data/sub_dir_without_trailing_s  | backup                | no  | Passed to tar as --exclude=$EXCLUDE_FILES treating $DATA_PATH as current dir |
 | -e PREFIX=prefix                                   | backup-once, schedule | no  | Prefix to encrypted tgz file name. The basename is a date stamp with a tgz.aes suffix | 
 | -e CRON_SCHEDULE='5 3 \* \* \*'                    | schedule              | no  | Specifies when cron job runs, see [format](http://en.wikipedia.org/wiki/Cron). Default is 5 3 \* \* \*, runs every night at 03:05 |
 | -v /path/to/backup:/data:ro                        | backup-once, schedule | yes | Mount target local folder to container's data folder. Content of this folder will be tar:ed, encrypted and uploaded to the S3 bucket. | 

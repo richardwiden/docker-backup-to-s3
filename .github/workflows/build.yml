@@ -19,6 +19,7 @@ jobs:
       AES_PASSPHRASE: secret
       AWS_DEFAULT_OUTPUT: json
       AWS_DEFAULT_REGION: us-east-1
+      EXCLUDE_FILES: ./file_that_should_be_excluded
     steps:
       - uses: actions/checkout@v2
 
