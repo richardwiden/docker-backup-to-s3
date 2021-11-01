@@ -26,7 +26,7 @@ case $1 in
 
     # CRON_ENV="PARAMS='$PARAMS'\nDATA_PATH='$DATA_PATH'\nS3_PATH='$S3_PATH'\nPREFIX='$PREFIX'\nAES_PASSPHRASE='$AES_PASSPHRASE'"
     CRON_ENV="$(env)"
-    echo -e "$CRON_ENV\n\n$CRON_SCHEDULE /backup.sh > $LOGFILE"  > $CRONFILE
+    echo -e "$CRON_ENV\n\n$CRON_SCHEDULE /backup.sh"  > $CRONFILE
     crontab $CRONFILE
 
     exec crond -f
