@@ -2,7 +2,7 @@ FROM alpine
 LABEL org.opencontainers.image.authors="richardwiden@gmail.com"
 LABEL org.opencontainers.image.source=https://github.com/richardwiden/docker-backup-to-s3
 MAINTAINER "richardwiden@gmail.com"
-LABEL version="1.0"
+LABEL version="2.0.0"
 
 RUN apk update && \
     apk add -f py-pip apk-cron curl openssl bash jq tzdata && \
