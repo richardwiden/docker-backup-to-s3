@@ -1,4 +1,4 @@
-# richardwiden/backup-to-s3
+# richardwiden/docker-backup-to-s3
 
 Docker container that periodically backups files to Amazon S3 using awscli and cron.
 All files will be tar:ed and encrypted with AES 256 CBC.
@@ -16,7 +16,7 @@ tar xf restore.tgz
 ## Usage
 
 ```
-docker run -d [options] richardwiden/backup-to-s3 backup-once|schedule|restore
+docker run -d [options] richardwiden/docker-backup-to-s3 backup-once|schedule|restore
 ```
 
 * Backup: Make a single backup and exit.
@@ -58,7 +58,7 @@ docker run -d \
 	-e AES_PASSPHRASE=secret \
 	-e CRON_SCHEDULE='0 12 * * *' \
 	-v /home/user/data:/data:ro \
-	richardwiden/backup-to-s3 schedule
+	richardwiden/docker-backup-to-s3 schedule
 ```
 
 
@@ -72,7 +72,7 @@ docker run --rm \
 	-e S3_PATH=s3://my-bucket/backup/ \
 	-e AES_PASSPHRASE=secret \
 	-v /home/user/data:/data:ro \
-	richardwiden/backup-to-s3 backup-once
+	richardwiden/docker-backup-to-s3 backup-once
 ```
 
 Restore the backup from `2016-04-11T07:25:30Z` and then delete the container:
@@ -86,6 +86,6 @@ docker run --rm \
 		-e AES_PASSPHRASE=secret \
 	-e VERSION=2016-04-11T07:25:30Z
 	-v /home/user/data:/data \
-	richardwiden/backup-to-s3 restore
+	richardwiden/docker-backup-to-s3 restore
 ```     
         
