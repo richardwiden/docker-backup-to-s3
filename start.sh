@@ -3,8 +3,6 @@
 set -e
 test -z $DEBUG || set -x
 
-
-: ${AWS_DEFAULT_REGION:?"AWS_DEFAULT_REGION env variable is required"}
 : ${AWS_ACCESS_KEY_ID:?"AWS_ACCESS_KEY_ID env variable is required"}
 : ${AWS_SECRET_ACCESS_KEY:?"AWS_SECRET_ACCESS_KEY env variable is required"}
 : ${S3_PATH:?"S3_PATH env variable is required"}

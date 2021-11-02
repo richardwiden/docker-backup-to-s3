@@ -34,8 +34,6 @@ jobs:
         run: ./test/test_schedule_backup.sh
 
       - name: Run scheduled restore
-        env:
-          VERSION: ''
         run: ./test/test_restore.sh
 
       - name: Release
