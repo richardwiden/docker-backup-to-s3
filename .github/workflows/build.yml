@@ -22,6 +22,7 @@ jobs:
       EXCLUDE_FILES: ./file_that_should_be_excluded
       CRON_SCHEDULE: '* * * * *'
       DELETE_OLDER_THAN: '1 minute ago'
+      DEBUG: y
     steps:
       - uses: actions/checkout@v2
 
