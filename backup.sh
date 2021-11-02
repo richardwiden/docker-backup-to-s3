@@ -53,6 +53,21 @@ runbackup() {
   duration=$(( finished - started ))
 
   version=$(echo $version | sed -e 's/\r//g'| sed -e 's/\n//g')
+
+  #Delete old
+  aws $AWS_ARGS s3 ls $S3_PATH | while read -r line;
+    do
+       createDate=`echo $line|awk {'print $1" "$2'}`
+       createDate=`date -d"$createDate" +%s`
+       olderThan=`date --date "159 days ago" +%s`
+       if [[ $createDate -lt $olderThan ]]; then
+           fileName=$(echo $line | cut -d " " -f 4| sed -e 's/\r//g'| sed -e 's/\n//g')
+           if [[ $fileName != "" ]]; then
+                   aws $AWS_ARGS s3 rm "$S3_PATH/$fileName"
+           fi
+      fi
+    done;
+
   #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
   printf "%s" "$version"
   if [ -f "$LOGFILE" ]; then

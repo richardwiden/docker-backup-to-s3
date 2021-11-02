@@ -11,7 +11,20 @@ dateISO() {
 started=$(date +%s)
 startedAt=$(date -u -d @$started  +"%Y-%m-%dT%H:%M:%SZ")
 
-s3obj="$VERSION.tgz.aes"
+if [ -n "${S3_ENDPOINT}" ]; then
+  AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
+else
+  AWS_ARGS=""
+fi
+
+if [ -z "$VERSION" ]; then
+  s3obj="$VERSION.tgz.aes"
+else
+  LIST_FILES=$(aws s3 $AWS_ARGS ls "${S3_PATH}/"| sort)
+  s3obj=$(echo $LIST_FILES| head -1| cut -d " " -f 4 | sed -e 's/\r//g'| sed -e 's/\n//g')
+fi
+
+
 tarfile="restore.tgz"
 
 
@@ -19,11 +32,7 @@ if [[ ! -z "${WIPE_TARGET}" && "${DATA_PATH}" != "/" ]]; then
   find $DATA_PATH/ -mindepth 1 -delete
 fi
 
-if [ -n "${S3_ENDPOINT}" ]; then
-  AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
-else
-  AWS_ARGS=""
-fi
+
 
 output=$( aws $AWS_ARGS s3 cp $PARAMS "${S3_PATH}/${s3obj}" "$DATA_PATH" 2>&1 )
 output=$(echo $output | sed -e 's/\r//g'| sed -e 's/\n//g')

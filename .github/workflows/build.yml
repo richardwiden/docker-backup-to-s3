@@ -20,6 +20,7 @@ jobs:
       AWS_DEFAULT_OUTPUT: json
       AWS_DEFAULT_REGION: us-east-1
       EXCLUDE_FILES: ./file_that_should_be_excluded
+      CRON_SCHEDULE: '* * * * *'
     steps:
       - uses: actions/checkout@v2
 
@@ -27,6 +28,14 @@ jobs:
         run: ./test/test_backup.sh
 
       - name: Run restore
+        run: ./test/test_restore.sh
+
+      - name: Run scheduled backup
+        run: ./test/test_schedule_backup.sh
+
+      - name: Run scheduled restore
+        env:
+          VERSION: ''
         run: ./test/test_restore.sh
 
       - name: Release

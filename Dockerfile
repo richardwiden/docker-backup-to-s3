@@ -5,7 +5,7 @@ MAINTAINER "richardwiden@gmail.com"
 LABEL version="2.0.0"
 
 RUN apk update && \
-    apk add -f py-pip apk-cron curl openssl bash jq tzdata && \
+    apk add -f py-pip apk-cron curl openssl bash jq tzdata coreutils&& \
     pip install -U pip && \
     pip install awscli && \
     rm -rf /var/cache/apk/*

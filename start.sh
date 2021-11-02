@@ -34,7 +34,7 @@ case $1 in
     ;;
 
   restore)
-    : ${VERSION:?"VERSION env variable is required"}
+    #: ${VERSION:?"VERSION env variable is required"}
     exec /restore.sh
     ;;
 
