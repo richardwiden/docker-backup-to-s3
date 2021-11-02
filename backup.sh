@@ -55,7 +55,7 @@ runbackup() {
   version=$(echo $version | sed -e 's/\r//g'| sed -e 's/\n//g')
 
   #Delete old
-  if [ -z "$DELETE_OLDER_THAN" ]; then
+  if [ -n "$DELETE_OLDER_THAN" ]; then
     aws "$AWS_ARGS" s3 ls "$S3_PATH" 2>&1 | while read -r line;
     do
       createDate=$(echo "$line"|awk {'print $1" "$2'}| sed -e 's/\r//g'| sed -e 's/\n//g')
@@ -64,7 +64,7 @@ runbackup() {
       if [[ $createDate -lt $olderThan ]]; then
         fileName=$(echo "$line" | sed -e 's/\r//g'| sed -e 's/\n//g')
         if [[ $fileName != "" ]]; then
-          aws "$AWS_ARGS" s3 rm "$S3_PATH/$fileName"
+          aws "$AWS_ARGS" s3 rm "$S3_PATH/$fileName" >> "$LOGFILE"
         fi
       fi
     done;
