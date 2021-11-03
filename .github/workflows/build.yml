@@ -22,9 +22,14 @@ jobs:
       EXCLUDE_FILES: ./file_that_should_be_excluded
       CRON_SCHEDULE: '* * * * *'
       DELETE_OLDER_THAN: '1 minute ago'
-      DEBUG: y
     steps:
       - uses: actions/checkout@v2
+
+      - name: Run scheduled backup
+        run: ./test/test_schedule_backup.sh
+
+      - name: Run scheduled restore
+        run: ./test/test_restore.sh
 
       - name: Run backup
         run: ./test/test_backup.sh
@@ -32,11 +37,7 @@ jobs:
       - name: Run restore
         run: ./test/test_restore.sh
 
-      - name: Run scheduled backup
-        run: ./test/test_schedule_backup.sh
 
-      - name: Run scheduled restore
-        run: ./test/test_restore.sh
 
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"

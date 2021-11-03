@@ -27,4 +27,3 @@ do
 done
 docker kill backup
 docker volume rm data
-echo "VERSION=\"\""  >> $GITHUB_ENV

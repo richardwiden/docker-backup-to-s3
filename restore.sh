@@ -18,17 +18,13 @@ else
 fi
 
 
-if [ -n "$VERSION" ]; then
+if [ -z "$VERSION" ]; then
   list_command=$(aws $AWS_ARGS s3 ls "$S3_PATH/"| sort)
-  echo $list_command
-  s3obj=$(echo "$list_command"| head -1| cut -d " " -f 4 | sed -e 's/\r//g'| sed -e 's/\n//g')
+
+  s3obj=$(echo $list_command | head -1| cut -d " " -f 4 | sed -e 's/\r//g'| sed -e 's/\n//g')
 else
   s3obj="$VERSION.tgz.aes"
 fi
-
-echo $s3obj
-
-tarfile="restore.tgz"
 
 
 if [[ ! -z "${WIPE_TARGET}" && "${DATA_PATH}" != "/" ]]; then
@@ -42,7 +38,7 @@ output=$(echo $output | sed -e 's/\r//g'| sed -e 's/\n//g')
 code=$?
 if [ $code ]; then
   cd $DATA_PATH
-
+  tarfile="restore.tgz"
   openssl aes-256-cbc -iter 1000 -k "${AES_PASSPHRASE}" -in $s3obj -out $tarfile -d
   ssl_code=$?
   tar xzf $tarfile
@@ -60,16 +56,16 @@ fi
 rm -f $s3obj
 rm -f $tarfile
 
-printf "{\"restore\":{\"state\":\"restored\" } }\n"
+printf "{\"restore\":{\"state\":\"restored\" } }" | jq
 
-if [[ ! -z "$POST_RESTORE_COMMAND" && "$result" == "success" ]]; then
+if [[ -n "$POST_RESTORE_COMMAND" && "$result" == "success" ]]; then
   restore_cmd_out=$($POST_RESTORE_COMMAND)
   printf "{\"restore\":{\"state\":\"post-command-run\", \"output\":\"%s\", \"exitCode\":\"%s\"}}\n" "$restore_cmd_out" "$?" | jq
-
 fi
 
 finished=$(date +%s)
 duration=$(( finished - started ))
-printf "{\"restore\":{ \"state\":\"%s\", \"startedAt\":\"%s\",\"duration\":\"%i seconds\",\"from\":\"%s/%s\",\"output\":\"%s\"}}\n" "$result"  "$startedAt" "$duration" "$S3_PATH" "$s3obj" "$output" |jq
+printf "{\"restore\":{ \"state\":\"%s\", \"startedAt\":\"%s\",\"duration\":\"%i seconds\",\"from\":\"%s/%s\",\"output\":\"%s\"}}" "$result"  "$startedAt" "$duration" "$S3_PATH" "$s3obj" "$output" |jq
+
 
 
