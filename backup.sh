@@ -54,7 +54,6 @@ runbackup() {
   sleep 1
   #Delete old
   if [ -n "$DELETE_OLDER_THAN" ]; then
-
     list_command=$(aws $AWS_ARGS s3 ls "$S3_PATH/")
     echo "$list_command" | while read -r line;
     do
@@ -68,7 +67,6 @@ runbackup() {
         fi
       fi
     done;
-    echo "older than end"
   fi
 
   #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq

@@ -20,8 +20,9 @@ fi
 if [ -z "$VERSION" ]; then
   s3obj="$VERSION.tgz.aes"
 else
-  LIST_FILES=$(aws $AWS_ARGS s3 ls "${S3_PATH}/"| sort)
-  s3obj=$(echo $LIST_FILES| head -1| cut -d " " -f 4 | sed -e 's/\r//g'| sed -e 's/\n//g')
+  list_command=$(aws $AWS_ARGS s3 ls "$S3_PATH/"| sort)
+  echo $list_command
+  s3obj=$(echo $list_command| head -1| cut -d " " -f 4 | sed -e 's/\r//g'| sed -e 's/\n//g')
 fi
 
 echo $s3obj
