@@ -21,7 +21,7 @@ docker run --rm --network local --name s3 -d -p 9000:9000 -e USER="$AWS_ACCESS_K
 docker run --rm --network local --name aws -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_EC2_METADATA_DISABLED=true amazon/aws-cli --endpoint-url http://s3:9000 s3 mb s3://my-bucket
 docker run --rm --network local --name backup -v data:/data -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_EC2_METADATA_DISABLED -e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE -e EXCLUDE_FILES -e DELETE_OLDER_THAN docker-backup-to-s3:latest backup-once
 sleep 10
-VERSION=$(docker run --rm --network local --name backup -v data:/data -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_EC2_METADATA_DISABLED -e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE -e EXCLUDE_FILES -e DELETE_OLDER_THAN docker-backup-to-s3:latest backup-once)
+VERSION=$(docker run --rm --network local --name backup -v data:/data -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_EC2_METADATA_DISABLED -e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE -e EXCLUDE_FILES -e DELETE_OLDER_THAN docker-backup-to-s3:latest backup-once | docker run --rm -i imega/jq -r '.backup.version')
 export VERSION
 echo "VERSION=$VERSION"
 echo "VERSION=$VERSION"  >> $GITHUB_ENV

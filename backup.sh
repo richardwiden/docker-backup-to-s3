@@ -51,11 +51,12 @@ runbackup() {
   duration=$(( finished - started ))
 
   version=$(echo $version | sed -e 's/\r//g'| sed -e 's/\n//g')
+  deleted=""
   sleep 1
   #Delete old
   if [ -n "$DELETE_OLDER_THAN" ]; then
     list_command=$(aws $AWS_ARGS s3 ls "$S3_PATH/")
-    echo "$list_command" | while read -r line;
+    while read -r line;
     do
       createDate=$(echo "$line"|awk {'print $1" "$2'}| sed -e 's/\r//g'| sed -e 's/\n//g')
       createDate=$(date -d "$createDate" +%s| sed -e 's/\r//g'| sed -e 's/\n//g')
@@ -71,13 +72,14 @@ runbackup() {
               exit 2
               ;;
           esac
+          deleted="$deleted,$delete_output"
         fi
       fi
-    done;
+    done < <(echo "$list_command" )
   fi
 
-  #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
-  printf "%s" "$version"
+  printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}, \"deleted\":\"%s\"}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output" "$deleted"|jq
+  ##printf "%s" "$version"
 }
 
 
