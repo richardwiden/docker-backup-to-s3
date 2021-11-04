@@ -32,6 +32,8 @@ jobs:
         run: ./test/test_restore.sh
 
       - name: Run backup
+        env:
+          DELETE_OLDER_THAN: '10 seconds ago'
         run: ./test/test_backup.sh
 
       - name: Run restore

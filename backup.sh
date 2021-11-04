@@ -34,7 +34,7 @@ runbackup() {
 
   openssl enc -aes-256-cbc -iter 1000 -k "${AES_PASSPHRASE}" -in /tmp/$name -out /tmp/$s3name
 
-  output="$( aws $AWS_ARGS s3 cp $PARAMS "/tmp/$s3name" "$S3_PATH/$s3name" 2>&1 )"
+  output="$( aws $AWS_ARGS s3 cp /tmp/$s3name $S3_PATH/$s3name 2>&1 )"
   output=$(echo $output | sed -e 's/\r//g'| sed -e 's/\n//g')
 
   code=$?
@@ -63,7 +63,14 @@ runbackup() {
       if [[ $createDate -lt $olderThan ]]; then
         fileName=$(echo "$line" | sed -e 's/\r//g'| sed -e 's/\n//g')
         if [[ $fileName != "" ]]; then
-          aws "$AWS_ARGS" s3 rm "$S3_PATH/$fileName" >> "$LOGFILE"
+          delete_output=$(aws $AWS_ARGS s3 rm "$S3_PATH/$fileName")
+          case "$delete_output" in
+            *"aws: error"*)
+              echo "failed: aws $AWS_ARGS s3 rm $S3_PATH/$fileName"
+              echo "$delete_output"
+              exit 2
+              ;;
+          esac
         fi
       fi
     done;
@@ -71,9 +78,6 @@ runbackup() {
 
   #printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output"|jq
   printf "%s" "$version"
-  if [ -f "$LOGFILE" ]; then
-    printf "%s" "$version" >> "$LOGFILE"
-  fi
 }
 
 
