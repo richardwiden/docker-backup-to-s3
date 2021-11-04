@@ -25,5 +25,11 @@ do
   sleep 10
   echo "Slept: $i seconds"
 done
+
+docker cp backup:/var/log/backup.log backup.log
 docker kill backup
 docker volume rm data
+
+cat backup.log
+ls backup.log
+if [ ! -s backup.log ]; then exit 2; fi
