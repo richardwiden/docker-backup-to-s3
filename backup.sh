@@ -34,7 +34,7 @@ runbackup() {
 
   openssl enc -aes-256-cbc -iter 1000 -k "${AES_PASSPHRASE}" -in /tmp/$name -out /tmp/$s3name
 
-  output="$( aws $AWS_ARGS s3 cp /tmp/$s3name $S3_PATH/$s3name 2>&1 )"
+  output="$( aws $AWS_ARGS s3 cp /tmp/$s3name $S3_PATH/$s3name --no-progress 2>&1 )"
   output=$(echo $output | sed -e 's/\r//g'| sed -e 's/\n//g')
 
   code=$?
