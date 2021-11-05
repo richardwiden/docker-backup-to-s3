@@ -22,6 +22,7 @@ docker run --rm --network local --name aws -e AWS_ACCESS_KEY_ID -e AWS_SECRET_AC
 docker run --rm --network local --name backup -v data:/data -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_EC2_METADATA_DISABLED -e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE -e EXCLUDE_FILES -e DELETE_OLDER_THAN docker-backup-to-s3:latest backup-once
 sleep 10
 RESTORE=$(docker run --rm --network local --name backup -v data:/data -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_EC2_METADATA_DISABLED -e S3_PATH -e S3_ENDPOINT -e AES_PASSPHRASE -e EXCLUDE_FILES -e DELETE_OLDER_THAN docker-backup-to-s3:latest backup-once)
+echo "$RESTORE"
 VERSION=$(echo "$RESTORE" | docker run --rm -i imega/jq -r '.backup.version')
 DELETED_FILES=$(echo "$RESTORE" | docker run --rm -i imega/jq -r '.deleted')
 if [ -z "$DELETED_FILES" ]; then
