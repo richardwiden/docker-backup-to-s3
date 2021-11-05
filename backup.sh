@@ -67,22 +67,22 @@ runbackup() {
           delete_output=$(aws $AWS_ARGS s3 rm "$S3_PATH/$fileName")
           case "$delete_output" in
             *"aws: error"*)
-              echo "failed: aws $AWS_ARGS s3 rm $S3_PATH/$fileName"
-              echo "$delete_output"
-              exit 2
+              result="error:failed: aws $AWS_ARGS s3 rm $S3_PATH/$fileName"
+              break;
               ;;
           esac
-          deleted="$deleted,$delete_output"
+          if [ "$deleted" = "" ]; then
+            deleted=$delete_output
+          else
+            deleted="$deleted,$delete_output"
+          fi
         fi
       fi
     done < <(echo "$list_command" )
   fi
 
-  printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}, \"deleted\":\"%s\"}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output" "$deleted"|jq
-  ##printf "%s" "$version"
+  printf "{\"backup\": { \"state\":\"%s\", \"startedAt\":\"%s\", \"duration\":\"%i seconds\",\"version\":\"%s\", \"name\":\"%s/%s\", \"output\":\"%s\"}, \"deleted\":\"%s\"}"  "$result" "$startedAt" "$duration" "$version" "$S3_PATH" "$s3name" "$output" "$deleted" | jq
 }
-
-
 
 (
   flock -n 200 || exit 1
