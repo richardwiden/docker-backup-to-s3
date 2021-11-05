@@ -29,6 +29,7 @@ if [ -z "$DELETED_FILES" ]; then
   echo "$DELETED_FILES"
   exit 2
 fi
+echo "$DELETED_FILES"
 export VERSION
 echo "VERSION=$VERSION"
 echo "VERSION=$VERSION"  >> $GITHUB_ENV

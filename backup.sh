@@ -62,7 +62,7 @@ runbackup() {
       createDate=$(date -d "$createDate" +%s| sed -e 's/\r//g'| sed -e 's/\n//g')
       olderThan=$(date --date "$DELETE_OLDER_THAN" +%s| sed -e 's/\r//g'| sed -e 's/\n//g')
       if [[ $createDate -lt $olderThan ]]; then
-        fileName=$(echo "$line" | sed -e 's/\r//g'| sed -e 's/\n//g')
+        fileName=$(echo "$line" |awk {'print $4"'}| sed -e 's/\r//g'| sed -e 's/\n//g')
         if [[ $fileName != "" ]]; then
           delete_output=$(aws $AWS_ARGS s3 rm "$S3_PATH/$fileName")
           case "$delete_output" in
