@@ -27,7 +27,7 @@ docker run -d [options] richardwiden/docker-backup-to-s3 backup-once|schedule|re
 
 | Name                                                | Operation        | Required | Description |
 | -------------------------------------------------  | ----------------- | --------- | --------------------------- |
-| -e AWS_ACCESS_KEY_ID=eu-central-1                  | all                   | yes |  Endpoint region (ideally where bucket is located)  |
+| -e AWS_DEFAULT_REGION=eu-central-1                 | all                   | yes |  Endpoint region (ideally where bucket is located)  |
 | -e AWS_ACCESS_KEY_ID=&lt;AWS_KEY&gt;               | all                   | yes |  Your AWS key  |
 | -e AWS_SECRET_ACCESS_KEY=&lt;AWS_SECRET&gt;        | all                   | yes | Your AWS secret |
 | -e S3_PATH=s3://&lt;BUCKET_NAME&gt;/&lt;PATH&gt;/  | all                   | yes | S3 Bucket name and path. Should end with trailing slash. | 
