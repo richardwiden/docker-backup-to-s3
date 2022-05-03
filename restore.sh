@@ -19,8 +19,9 @@ fi
 
 
 if [ -z "$VERSION" ] || [ "$VERSION" = "" ]; then
-  list_command=$(aws $AWS_ARGS s3 ls "$S3_PATH/"| sort)
-  s3obj=$(echo $list_command | head -1| cut -d " " -f 4 | sed -e 's/\r//g'| sed -e 's/\n//g')
+    S3_COMMAND="$AWS_ARGS s3 ls ${S3_PATH}/"
+    # shellcheck disable=SC2086
+    s3obj="$(aws $S3_COMMAND | grep -v ' PRE '| sort -r| head -1| tr -s ' '| cut -d ' ' -f4)"
 else
   s3obj="$VERSION.tgz.aes"
 fi
